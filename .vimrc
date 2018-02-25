@@ -30,7 +30,6 @@ set showmatch		" highlight match [{()}]
 nnoremap B ^
 nnoremap E $
 
-
 " colorscheme brogrammer
 
 " always open up vim with NERDTree open
@@ -39,7 +38,6 @@ autocmd VimEnter * NERDTree
 autocmd VimEnter * wincmd p
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <C-n> : NERDTreeToggle<CR>
-
 
 set statusline=bot
 highlight Comment ctermfg=LightBlue
@@ -73,14 +71,6 @@ map () xi(<Esc>pa)<Esc>
 map [] xi[<Esc>pa]<Esc>
 map {} xi{<Esc>pa}<Esc>
 
-
 " Folding for this file {{{
 set modelines=1
 " }}}
-
-
-
-
-
-
-
