@@ -14,10 +14,10 @@ cd dotfilies/
 
 Create an executable file.
 ```sh
-chmod -x setup.sh
+chmod +x setup.sh
 ```
 
-Run the executable file. The .vimrc file will not be in your home directory.
+Run the executable file. The .vimrc file will not be in your home directory. If you have a permissions issue, run `sudo chown $USER: ~/.vim/ && sudo chown $USER: ~/dotfiles`
 ```sh
 ./setup.sh
 ```

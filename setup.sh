@@ -1,7 +1,7 @@
 #!/usr/bin/sh
 
 # Get vim all set up
-rm ~/.vimrc
+rm -f ~/.vimrc
 ln -s $PWD/.vimrc ~/.vimrc
 
 # install vundle and all other plugins
