@@ -12,6 +12,8 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'airblade/vim-gitgutter'
 " suggests syntax
 " Plugin 'vim-syntastic/syntastic'
+" run gdb in vim by running :ConqueGdbSplit ./executable
+Plugin 'vim-scripts/Conque-GDB'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required

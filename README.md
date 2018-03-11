@@ -9,7 +9,7 @@ git clone https://github.com/aruniverse/dotfiles.git
 
 Navigate into the directory.
 ```sh
-cd dotfilies/
+cd dotfiles/
 ```
 
 Create an executable file.
