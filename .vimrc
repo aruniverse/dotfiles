@@ -25,6 +25,7 @@ set softtabstop=4	" number of spaces in tab when editing
 set shiftwidth=4	" indent corresponding to one tab
 set expandtab		" tabs are spaces
 set number		    " show line numbers
+set relativenumber
 set showcmd		    " show command in bottom bar
 set cursorline		" highlight current line
 set showmatch		" highlight match [{()}]
