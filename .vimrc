@@ -29,6 +29,7 @@ set relativenumber
 set showcmd		    " show command in bottom bar
 set cursorline		" highlight current line
 set showmatch		" highlight match [{()}]
+set mouse=a         " enable mouse click
 
 nnoremap B ^
 nnoremap E $
