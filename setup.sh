@@ -2,7 +2,7 @@
 
 # Get vim all set up
 rm -f ~/.vimrc
-ln -s $PWD/.vimrc ~/.vimrc
+cp $PWD/.vimrc ~/.vimrc
 
 # install vundle and all other plugins
 mkdir -p ~/.vim/bundle
