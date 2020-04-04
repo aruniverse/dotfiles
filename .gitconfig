@@ -1,0 +1,58 @@
+[user]
+	name = Arun George
+#	email = 
+
+[core]
+	autocrlf = input
+	editor = code --wait
+	safecrlf = false
+
+[color "status"]
+	changed = red bold
+	untracked = cyan bold
+	added = green bold
+
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+
+# diff
+[diff]
+	tool = vscode
+[difftool]
+	prompt = true
+[difftool "vscode"]
+	cmd = code --wait --diff $LOCAL $REMOTE
+
+# merge
+[merge]
+	tool = vscode
+[mergetool]
+	prompt = false
+[mergetool "vscode"]
+	cmd = code --wait $MERGED
+	keepBackup = false
+	trustExitCode = true
+
+[alias]
+	aa = add --all
+	st = status --short -u --branch
+	br = branch
+	bd = branch -d
+	cb = checkout -b
+	di = diff
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+	ld = log --pretty=format:"%C(yellow)%h\\ %C(green)%ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short --graph
+	ls = log --pretty=format:"%C(green)%h\\ %C(yellow)[%ad]%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative
+	lp = log --graph --decorate --pretty=oneline --abbrev-commit
+	pristine = 'git reset --hard && git clean -dfx'
+	stl = stash list
+	stp = stash pop
+	undo-commit-soft = reset --soft HEAD~1
+	undo-commit-hard = reset --hard HEAD~1
+	ru = remote update
+	fa = fetch --all
