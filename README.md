@@ -17,7 +17,7 @@ Create an executable file.
 chmod +x setup.sh
 ```
 
-Run the executable file. The .vimrc file will not be in your home directory. If you have a permissions issue, run `sudo chown $USER: ~/.vim/ && sudo chown $USER: ~/dotfiles`
+Run the set up script. The .vimrc file will be in your $HOME directory.
 ```sh
 ./setup.sh
 ```
