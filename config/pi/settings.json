@@ -1,0 +1,30 @@
+{
+  "packages": [
+    "npm:pi-subagents",
+    "npm:@hypabolic/pi-hypa",
+    "npm:pi-web-access",
+    "npm:pi-mcp-adapter",
+    "npm:context-mode",
+    "npm:@tintinweb/pi-subagents",
+    "npm:@plannotator/pi-extension",
+    "npm:@quintinshaw/pi-dynamic-workflows",
+    "npm:@dietrichgebert/ponytail",
+    "npm:pi-hermes-memory",
+    "npm:pi-crew",
+    "npm:pi-btw",
+    "npm:@firstpick/pi-package-webui",
+    "npm:pi-vault-mind",
+    "npm:bigpowers"
+  ],
+  "theme": "crew-dark",
+  "defaultProvider": "openrouter",
+  "defaultModel": "moonshotai/kimi-k2.6",
+  "defaultThinkingLevel": "medium",
+  "markdown": {
+    "mermaid": "final"
+  },
+  "hideThinkingBlock": false,
+  "showCacheMissNotices": true,
+  "tuiMode": "fullscreen",
+  "fullscreenScrollbar": "always"
+}

@@ -1,0 +1,6 @@
+# Secrets
+config/pi/auth.json
+config/pi/mcp-auth.json
+*.pem
+*.key
+.env

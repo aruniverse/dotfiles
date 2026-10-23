@@ -1,0 +1,54 @@
+[user]
+  name = Arun George
+  email = aruniverse@users.noreply.github.com
+
+[core]
+  editor = vim
+  pager = less
+  autocrlf = input
+
+[init]
+  defaultBranch = main
+
+[push]
+  default = simple
+  autoSetupRemote = true
+
+[pull]
+  rebase = false
+
+[fetch]
+  prune = true
+
+[diff]
+  colorMoved = zebra
+
+[status]
+  short = true
+  branch = true
+
+[alias]
+  st = status
+  co = checkout
+  br = branch
+  ci = commit
+  cia = commit --amend
+  cian = commit --amend --no-edit
+  lg = log --oneline --graph --decorate --all
+  last = log -1 HEAD --stat
+  unstage = reset HEAD --
+  discard = checkout --
+  amend = commit --amend --no-edit
+  fixup = commit --fixup
+  squash = rebase -i --autosquash
+  undo = reset HEAD~1 --mixed
+  tidy = !git branch --merged | grep -v '\\*' | xargs -r git branch -d
+
+[color]
+  ui = auto
+
+[log]
+  abbrevCommit = true
+
+[rerere]
+  enabled = true
