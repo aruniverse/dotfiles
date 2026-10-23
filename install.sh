@@ -1,138 +1,94 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# dotfiles installer — idempotent, backs up existing files
-# Works regardless of clone location.
-
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-BACKUP_DIR="$HOME/.dotfiles-backups/$(date +%Y%m%d-%H%M%S)"
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-
-info() { echo -e "${GREEN}[dotfiles]${NC} $*"; }
-warn() { echo -e "${YELLOW}[dotfiles]${NC} $*"; }
-abort() { echo -e "${RED}[dotfiles]${NC} $*"; exit 1; }
-
-backup_existing() {
-  local target="$1"
-  if [[ -e "$target" && ! -L "$target" ]]; then
-    mkdir -p "$BACKUP_DIR"
-    cp -R "$target" "$BACKUP_DIR/"
-    warn "Backed up $target -> $BACKUP_DIR"
-  fi
-}
+info() { printf '[dotfiles] %s\n' "$*"; }
 
 link_dotfile() {
-  local src="$1"
-  local dst="$2"
-
-  if [[ -L "$dst" ]]; then
-    local current
-    current="$(readlink "$dst" 2>/dev/null || true)"
-    if [[ "$current" == "$src" ]]; then
-      return 0
-    fi
+  local src="$1" dst="$2"
+  if [[ -L "$dst" && "$(readlink "$dst")" == "$src" ]]; then
+    return
   fi
-
-  backup_existing "$dst"
-  rm -rf "$dst"
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    info "Kept $dst (merge $src manually)"
+    return
+  fi
+  mkdir -p "$(dirname "$dst")"
   ln -s "$src" "$dst"
-  info "Linked $dst -> $src"
+  info "Linked $dst"
 }
 
-ensure_dir() {
-  mkdir -p "$1"
-}
-
-# Detect OS
-OS="unknown"
-case "$(uname -s)" in
-  Darwin) OS="macos" ;;
-  Linux)  OS="linux" ;;
-esac
-info "Detected OS: $OS"
-
-# ── Shell environment ──────────────────────────────────────────────
-info "Installing shell environment..."
-ensure_dir "$CONFIG_HOME"
-
-# Source env.sh from shell rc files
-SHELL_RC=""
-if [[ -n "${ZSH_VERSION:-}" || "$SHELL" == *zsh* ]]; then
-  SHELL_RC="$HOME/.zshrc"
-elif [[ -n "${BASH_VERSION:-}" || "$SHELL" == *bash* ]]; then
-  SHELL_RC="$HOME/.bashrc"
-fi
-
-if [[ -n "$SHELL_RC" && -f "$SHELL_RC" ]]; then
-  if ! grep -q "dotfiles/config/shell/env.sh" "$SHELL_RC" 2>/dev/null; then
-    cat >> "$SHELL_RC" <<EOF
-
-# dotfiles environment (managed by ${DOTFILES_DIR})
-[ -f "${DOTFILES_DIR}/config/shell/env.sh" ] && source "${DOTFILES_DIR}/config/shell/env.sh"
-EOF
-    info "Appended dotfiles source to \$SHELL_RC"
-  else
-    info "\$SHELL_RC already sources dotfiles"
+copy_template() {
+  local src="$1" dst="$2"
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    info "Kept $dst (merge $src manually)"
+    return
   fi
-fi
+  mkdir -p "$(dirname "$dst")"
+  # Applications can save private settings here; never write them back into Git.
+  cp "$src" "$dst"
+  info "Copied $dst"
+}
 
-# ── Rex ────────────────────────────────────────────────────────────
-info "Installing Rex config..."
-ensure_dir "$CONFIG_HOME/rex"
-link_dotfile "$DOTFILES_DIR/config/rex/init.lua"          "$CONFIG_HOME/rex/init.lua"
-link_dotfile "$DOTFILES_DIR/config/rex/keys.lua"          "$CONFIG_HOME/rex/keys.lua"
-link_dotfile "$DOTFILES_DIR/config/rex/actions.lua"       "$CONFIG_HOME/rex/actions.lua"
-link_dotfile "$DOTFILES_DIR/config/rex/hosts.lua"         "$CONFIG_HOME/rex/hosts.lua"
+append_source() {
+  local rc="$1" src="$2" line
+  mkdir -p "$(dirname "$rc")"
+  touch "$rc"
+  line="$(printf '[ ! -f %q ] || . %q' "$src" "$src")"
+  if ! grep -Fqx "$line" "$rc"; then
+    printf '\n# dotfiles\n%s\n' "$line" >> "$rc"
+  fi
+}
 
-# ── Pi ─────────────────────────────────────────────────────────────
-info "Installing Pi configs..."
-ensure_dir "$HOME/.pi/agent"
-link_dotfile "$DOTFILES_DIR/config/pi/settings.json"      "$HOME/.pi/agent/settings.json"
+case "${SHELL:-/bin/bash}" in
+  *zsh)
+    append_source "$HOME/.zprofile" "$DOTFILES_DIR/config/shell/profile.sh"
+    append_source "$HOME/.zprofile" "$DOTFILES_DIR/config/shell/env.sh"
+    append_source "$HOME/.zshrc" "$DOTFILES_DIR/config/shell/env.sh"
+    append_source "$HOME/.zshrc" "$DOTFILES_DIR/config/shell/zshrc.zsh"
+    ;;
+  *bash)
+    login_rc="$HOME/.bash_profile"
+    for rc in "$HOME/.bash_profile" "$HOME/.bash_login" "$HOME/.profile"; do
+      if [[ -f "$rc" ]]; then login_rc="$rc"; break; fi
+    done
+    append_source "$login_rc" "$DOTFILES_DIR/config/shell/profile.sh"
+    append_source "$login_rc" "$DOTFILES_DIR/config/shell/env.sh"
+    append_source "$HOME/.bashrc" "$DOTFILES_DIR/config/shell/env.sh"
+    ;;
+  *) info "Shell not managed; see README.md for Bash/Zsh setup" ;;
+esac
 
-# Only link mcp.json if it doesn't already exist (may contain auth)
-if [[ ! -e "$HOME/.pi/agent/mcp.json" ]]; then
-  link_dotfile "$DOTFILES_DIR/config/pi/mcp.json"         "$HOME/.pi/agent/mcp.json"
-else
-  info "Skipped mcp.json (already exists — merge manually if needed)"
-fi
+for file in init.lua keys.lua actions.lua hosts.lua; do
+  link_dotfile "$DOTFILES_DIR/config/rex/$file" "$CONFIG_HOME/rex/$file"
+done
 
-# ── Git ────────────────────────────────────────────────────────────
-info "Installing Git config..."
-link_dotfile "$DOTFILES_DIR/config/git/gitconfig"         "$HOME/.gitconfig"
+copy_template "$DOTFILES_DIR/config/pi/settings.json" "$HOME/.pi/agent/settings.json"
+copy_template "$DOTFILES_DIR/config/pi/mcp.json" "$HOME/.pi/agent/mcp.json"
+copy_template "$DOTFILES_DIR/config/pi/extensions/auto-session-name.ts" \
+  "$HOME/.pi/agent/extensions/auto-session-name.ts"
 
-# ── Vim ────────────────────────────────────────────────────────────
-info "Installing Vim config..."
-link_dotfile "$DOTFILES_DIR/config/vim/vimrc"             "$HOME/.vimrc"
+link_dotfile "$DOTFILES_DIR/config/git/gitconfig" "$HOME/.gitconfig"
+link_dotfile "$DOTFILES_DIR/config/git/ignore" "$HOME/.gitignore_global"
+link_dotfile "$DOTFILES_DIR/config/vim/vimrc" "$HOME/.vimrc"
 
-# Install Vundle and plugins if missing
-if [[ ! -d "$HOME/.vim/bundle/Vundle.vim" ]]; then
-  info "Installing Vundle..."
-  git clone https://github.com/VundleVim/Vundle.vim.git "$HOME/.vim/bundle/Vundle.vim" || warn "Vundle clone failed"
-fi
-
-# Try to install plugins silently
-if command -v vim >/dev/null 2>&1; then
-  vim +PluginInstall +qall 2>/dev/null || warn "Vim plugin install returned non-zero (maybe already installed)"
-fi
-
-# ── Bin scripts ───────────────────────────────────────────────────
-info "Linking bin scripts..."
-ensure_dir "$HOME/.local/bin"
-if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-  warn "Add ~/.local/bin to your PATH if it's not already there"
+copy_template "$DOTFILES_DIR/config/herdr/config.toml" "$CONFIG_HOME/herdr/config.toml"
+copy_template "$DOTFILES_DIR/config/zed/settings.json" "$CONFIG_HOME/zed/settings.json"
+case "$(uname -s)" in
+  Darwin) code_user="$HOME/Library/Application Support/Code/User" ;;
+  Linux) code_user="$CONFIG_HOME/Code/User" ;;
+  *) code_user="" ;;
+esac
+if [[ -n "$code_user" ]]; then
+  copy_template "$DOTFILES_DIR/config/vscode/settings.json" "$code_user/settings.json"
 fi
 
 for script in "$DOTFILES_DIR"/bin/*; do
   [[ -f "$script" ]] || continue
-  chmod +x "$script"
+  link_dotfile "$script" "$HOME/.local/bin/$(basename "$script")"
 done
 
-info "Done!"
-info "Reload your shell or run: source ${DOTFILES_DIR}/config/shell/env.sh"
-info "Then validate Rex config:  rex config check"
+info "Done. Restart your login shell to load the environment."
+info "Existing configs were kept. See README.md for merging and dependency setup."

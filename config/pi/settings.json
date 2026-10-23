@@ -1,30 +1,29 @@
 {
   "packages": [
-    "npm:pi-subagents",
-    "npm:@hypabolic/pi-hypa",
-    "npm:pi-web-access",
-    "npm:pi-mcp-adapter",
     "npm:context-mode",
-    "npm:@tintinweb/pi-subagents",
-    "npm:@plannotator/pi-extension",
-    "npm:@quintinshaw/pi-dynamic-workflows",
+    "npm:pi-subagents",
+    "npm:pi-mcp-adapter",
+    "npm:pi-web-access",
+    {
+      "source": "npm:@plannotator/pi-extension",
+      "skills": []
+    },
+    "npm:@juicesharp/rpiv-btw",
+    "npm:glimpseui",
+    "npm:pi-powerline-footer",
+    "npm:pi-intercom",
+    "npm:pi-prompt-template-model",
+    "npm:@ff-labs/pi-fff",
+    "npm:pi-clarify",
     "npm:@dietrichgebert/ponytail",
-    "npm:pi-hermes-memory",
-    "npm:pi-crew",
-    "npm:pi-btw",
-    "npm:@firstpick/pi-package-webui",
-    "npm:pi-vault-mind",
-    "npm:bigpowers"
+    "npm:pi-context-view",
+    "npm:pi-fff",
+    "npm:@narumitw/pi-goal",
+    "npm:@quintinshaw/pi-dynamic-workflows"
   ],
-  "theme": "crew-dark",
-  "defaultProvider": "openrouter",
-  "defaultModel": "moonshotai/kimi-k2.6",
-  "defaultThinkingLevel": "medium",
-  "markdown": {
-    "mermaid": "final"
-  },
-  "hideThinkingBlock": false,
-  "showCacheMissNotices": true,
-  "tuiMode": "fullscreen",
-  "fullscreenScrollbar": "always"
+  "theme": "dark",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "gpt-6.1-sol",
+  "defaultThinkingLevel": "high",
+  "extensions": ["-builtin:mcp"]
 }

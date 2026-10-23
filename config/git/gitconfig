@@ -6,6 +6,7 @@
   editor = vim
   pager = less
   autocrlf = input
+  excludesfile = ~/.gitignore_global
 
 [init]
   defaultBranch = main
@@ -16,6 +17,13 @@
 
 [pull]
   rebase = false
+  ff = only
+
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
 
 [fetch]
   prune = true
@@ -28,6 +36,14 @@
   branch = true
 
 [alias]
+  aa = add --all
+  bd = branch -d
+  cb = checkout -b
+  di = diff
+  stl = stash list
+  stp = stash pop
+  ru = remote update
+  fa = fetch --all
   st = status
   co = checkout
   br = branch
@@ -52,3 +68,7 @@
 
 [rerere]
   enabled = true
+
+# Keep credential helpers, work identities, and private endpoints outside this repo.
+[include]
+  path = ~/.gitconfig.local

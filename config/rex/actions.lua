@@ -61,7 +61,10 @@ rex.action{
   name  = "pull_dotfiles",
   title = "Pull Dotfiles",
   run   = function(ctx, args)
-    local dotfiles = os.getenv("DOTFILES_ROOT") or os.getenv("HOME") .. "/.dotfiles"
+    local dotfiles = os.getenv("DOTFILES_ROOT")
+    if dotfiles == nil or dotfiles == "" then
+      error("Source config/shell/env.sh and restart Rex so its server inherits DOTFILES_ROOT", 0)
+    end
     local r, err = rex.exec(
       { "git", "pull", "--ff-only" },
       { cwd = dotfiles, timeout = 20 }

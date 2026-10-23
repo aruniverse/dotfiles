@@ -1,0 +1,10 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Local agent state and generated research artifacts
+.pi
+.pi-subagents
+.firecrawl
+graphify-out/

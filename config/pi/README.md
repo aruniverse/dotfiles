@@ -1,29 +1,40 @@
-# Pi Dotfiles Notes
+# Pi setup
 
-Pi stores runtime data in hardcoded paths (`~/.pi/agent/`, `~/.agents/`).
-This directory keeps **shareable templates** that the installer symlinks into place.
+Pi defaults to `~/.pi/agent/`; `PI_CODING_AGENT_DIR` can override that location. The dotfiles installer targets the default location and copies missing templates. It never replaces existing settings or MCP config, and it never links writable Pi files into this repo.
 
-## Files
+## Preferences and packages
 
-- `settings.json` — packages, theme, provider, model preferences
-- `mcp.json` — MCP server endpoints
+`settings.json` captures this machine's package selection, dark theme, GitHub Copilot provider, and high thinking level. The default model is an account-dependent preference, not a bundled model. Choose an available model with `/model` if needed.
 
-## Secrets
+Both FFF packages are present on this machine: `@ff-labs/pi-fff` supplies search tools; `pi-fff` also supplies file resolution and autocomplete. The Plannotator entry disables its bundled skills because this machine installs those separately. Built-in MCP is explicitly disabled to match the use of `pi-mcp-adapter`.
 
-Do NOT commit these:
+After merging settings, reconcile packages:
 
-- `~/.pi/agent/auth.json`
-- `~/.pi/agent/mcp-auth.json`
+```sh
+pi update --extensions
+```
 
-Add them to `.gitignore` if you ever copy Pi files into the repo.
+Start Pi and use `/login` to authenticate. No credentials or enabled-model/account inventories are included.
 
-## Skills
+`extensions/auto-session-name.ts` is the custom extension from this machine. It makes an additional request to the active model with up to 500 characters of the first user message to name an unnamed session. It uses Pi's runtime authentication; no keys are stored in the extension. Omit it if you do not want that request or cost.
 
-`rex skill setup` installs the `rex` agent skill to `~/.agents/skills/rex`.
-To update agent skills after a Rex upgrade:
+## Skills and integrations
+
+Skills from packages above are installed with those packages. Other skills on this machine come from separate collections such as `kepano/obsidian-skills`, `mattpocock/skills`, Firecrawl, and Plannotator. Review and install the collections you need separately; this repo does not vendor their content, private skills, or machine-specific lockfiles.
 
 ```sh
 rex skill setup
+rex skill status
 ```
 
-Or run the helper in `bin/rex-setup-skills` after pulling new dotfiles.
+The `rex-setup-skills` helper runs those commands after a Rex upgrade. Use Herdr's integration setup to regenerate its managed Pi extension rather than copying the generated file.
+
+## Private files
+
+Keep these outside Git:
+
+- `auth.json`, `mcp-auth.json`, model/account stores, and trust state.
+- Sessions, caches, and generated runtime state.
+- MCP auth headers, private endpoints, environment values, and provider overrides containing secrets.
+
+`mcp.json` contains only the public Rex community endpoint. Merge it manually when you already have an MCP configuration; do not replace or export your live file wholesale.
