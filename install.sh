@@ -74,6 +74,7 @@ link_dotfile "$DOTFILES_DIR/config/git/gitconfig" "$HOME/.gitconfig"
 link_dotfile "$DOTFILES_DIR/config/git/ignore" "$HOME/.gitignore_global"
 link_dotfile "$DOTFILES_DIR/config/vim/vimrc" "$HOME/.vimrc"
 
+copy_template "$DOTFILES_DIR/config/gh/config.yml" "${GH_CONFIG_DIR:-$CONFIG_HOME/gh}/config.yml"
 copy_template "$DOTFILES_DIR/config/herdr/config.toml" "$CONFIG_HOME/herdr/config.toml"
 copy_template "$DOTFILES_DIR/config/zed/settings.json" "$CONFIG_HOME/zed/settings.json"
 case "$(uname -s)" in

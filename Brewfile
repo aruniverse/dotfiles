@@ -11,6 +11,8 @@ if OS.mac?
   brew "herdr"
   cask "font-fira-code-nerd-font"
   cask "git-credential-manager"
+  cask "bitwarden"
+  cask "obsidian"
   cask "iterm2"
   cask "visual-studio-code"
 end

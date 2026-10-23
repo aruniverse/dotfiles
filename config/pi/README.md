@@ -20,7 +20,7 @@ Start Pi and use `/login` to authenticate. No credentials or enabled-model/accou
 
 ## Skills and integrations
 
-Skills from packages above are installed with those packages. Other skills on this machine come from separate collections such as `kepano/obsidian-skills`, `mattpocock/skills`, Firecrawl, and Plannotator. Review and install the collections you need separately; this repo does not vendor their content, private skills, or machine-specific lockfiles.
+Skills from packages above are installed with those packages. See [Restore public skills](../../docs/skills.md) for the separately installed collections already used on this machine and the commands to reinstall them. Review and select the skills you need; this repo does not vendor their content, private skills, or machine-specific lockfiles.
 
 ```sh
 rex skill setup

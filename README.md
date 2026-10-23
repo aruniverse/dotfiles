@@ -4,7 +4,7 @@ Personal configuration for macOS and Linux. Configs contain portable preferences
 
 ## Install
 
-Clone anywhere, then run the installer:
+Install Git and GitHub CLI first (`brew install gh` on a Mac with Homebrew). Clone anywhere, then run the installer:
 
 ```sh
 gh repo clone aruniverse/dotfiles ~/repos/aruniverse/dotfiles
@@ -14,7 +14,7 @@ cd ~/repos/aruniverse/dotfiles
 
 The installer creates missing shell startup files and appends source lines. It preserves all existing config files and symlinks, including dangling symlinks. It does not download dependencies, install plugins, or change credentials.
 
-Pi, Herdr, Zed, and VS Code templates are copied only when missing. These apps can save private settings, so their writable config files are not linked back into this repository. Rex, Git, Vim, the global Git ignore file, and bin helpers are symlinked only when the destination is missing.
+GitHub CLI, Pi, Herdr, Zed, and VS Code templates are copied only when missing. These apps can save private settings, so their writable config files are not linked back into this repository. Rex, Git, Vim, the global Git ignore file, and bin helpers are symlinked only when the destination is missing.
 
 Restart your login shell after installation. Bash and Zsh are supported. For other shells, configure them manually; the shell scripts here require Bash or Zsh.
 
@@ -55,6 +55,7 @@ Install Rex separately. Optional integrations:
 | Rex | `config/rex/` | `$XDG_CONFIG_HOME/rex/` |
 | Pi | `config/pi/` | `~/.pi/agent/` |
 | Git | `config/git/gitconfig`, `config/git/ignore` | `~/.gitconfig`, `~/.gitignore_global` |
+| GitHub CLI | `config/gh/config.yml` | `$GH_CONFIG_DIR/config.yml`, or `$XDG_CONFIG_HOME/gh/config.yml` |
 | Vim | `config/vim/vimrc` | `~/.vimrc` |
 | Herdr | `config/herdr/config.toml` | `$XDG_CONFIG_HOME/herdr/config.toml` |
 | Zed | `config/zed/settings.json` | `$XDG_CONFIG_HOME/zed/settings.json` |
@@ -62,6 +63,8 @@ Install Rex separately. Optional integrations:
 | Helpers | `bin/` | `~/.local/bin/` |
 
 `XDG_CONFIG_HOME` defaults to `~/.config`. VS Code Insiders and other editor variants are not managed.
+
+GitHub CLI config includes this machine's HTTPS preference and `gh co` alias. Its `hosts.yml` authentication file is never copied or linked, and the installer does not log in. The Brewfile includes Obsidian and Bitwarden, but not vaults, sync settings, account state, or credentials.
 
 The editor templates include fonts, formatters, themes, and editing preferences. They exclude database connections, absolute runtime paths, terminal environment values, workspace trust lists, and agent permission/auto-approval settings. Herdr logs, plugin state, sessions, and its generated Pi integration are not copied.
 
@@ -94,4 +97,4 @@ rex config check "$PWD/config/rex/init.lua"
 git diff --check
 ```
 
-The Python tests use isolated homes inside this checkout and require Python 3.11 or newer. Rex and Zsh checks are skipped when their binaries are unavailable. The extension test requires Node.js 22.19 or newer and mocks model calls; no credentials or network requests are needed.
+The Python tests use isolated homes inside this checkout and require Python 3.11 or newer. Rex, Zsh, and GitHub CLI checks are skipped when their binaries are unavailable. The extension test requires Node.js 22.19 or newer and mocks model calls; no credentials or network requests are needed.

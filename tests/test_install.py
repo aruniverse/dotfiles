@@ -53,6 +53,10 @@ class InstallTests(unittest.TestCase):
         self.assertTrue((self.home / "custom-config/rex/init.lua").is_symlink())
         self.assertTrue((self.home / ".local/bin/rex-setup-skills").is_symlink())
         self.assertTrue((self.home / ".gitignore_global").is_symlink())
+        gh_config = self.home / "custom-config/gh/config.yml"
+        self.assertTrue(gh_config.is_file())
+        self.assertFalse(gh_config.is_symlink())
+        self.assertFalse((gh_config.parent / "hosts.yml").exists())
         git_env = {**self.env, "GIT_CONFIG_NOSYSTEM": "1"}
         result = subprocess.check_output(
             ["git", "config", "--global", "--get", "filter.lfs.process"],
@@ -65,6 +69,7 @@ class InstallTests(unittest.TestCase):
             ".gitconfig", ".gitignore_global", ".vimrc", ".pi/agent/settings.json",
             ".pi/agent/mcp.json", ".pi/agent/extensions/auto-session-name.ts",
             "custom-config/herdr/config.toml", "custom-config/zed/settings.json",
+            "custom-config/gh/config.yml",
         ]
         for name in targets:
             p = self.home / name
@@ -83,6 +88,29 @@ class InstallTests(unittest.TestCase):
         for name in targets:
             self.assertEqual((self.home / name).read_text(), "local configuration, do not replace\n")
         self.assertEqual(os.readlink(rex), str(self.home / "missing-local-config.lua"))
+
+    @unittest.skipUnless(shutil.which("gh"), "GitHub CLI is not installed")
+    def test_gh_config_override_preferences_and_existing_auth(self):
+        gh_dir = self.home / "alternate-gh"
+        gh_dir.mkdir()
+        self.env["GH_CONFIG_DIR"] = str(gh_dir)
+        self.env["GH_NO_UPDATE_NOTIFIER"] = "1"
+        hosts = gh_dir / "hosts.yml"
+        hosts.write_text("# Local authentication state; do not modify.\n")
+        before = hosts.read_bytes()
+        self.install()
+        self.assertFalse((self.home / "custom-config/gh").exists())
+        self.assertFalse((gh_dir / "config.yml").is_symlink())
+        self.assertEqual(hosts.read_bytes(), before)
+        protocol = subprocess.check_output(
+            [shutil.which("gh"), "config", "get", "git_protocol"], env=self.env, text=True,
+        )
+        self.assertEqual(protocol.strip(), "https")
+        aliases = subprocess.check_output(
+            [shutil.which("gh"), "alias", "list"], env=self.env, text=True,
+        )
+        self.assertIn("co", aliases)
+        self.assertIn("pr checkout", aliases)
 
     def test_local_git_overrides_win(self):
         (self.home / ".gitconfig.local").write_text(
@@ -236,7 +264,7 @@ class ConfigTests(unittest.TestCase):
 
     def test_auth_environment_and_local_files_are_ignored(self):
         for name in ("config/pi/auth.json", "config/pi/mcp-auth.json",
-                     "config/editor/auth.json", ".env", ".env.local",
+                     "config/editor/auth.json", "config/gh/hosts.yml", ".env", ".env.local",
                      "config/git/.gitconfig.local", "private.key"):
             result = subprocess.run(["git", "check-ignore", "--no-index", name],
                                     cwd=ROOT, capture_output=True)

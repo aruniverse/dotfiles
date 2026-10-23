@@ -33,6 +33,13 @@
   "editor.wordWrap": "on",
   "git.autofetch": true,
   "git.mergeEditor": true,
+  "github.copilot.enable": {
+    "*": true,
+    "markdown": true,
+    "plaintext": true,
+    "scminput": false,
+    "yaml": true
+  },
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "terminal.integrated.cursorBlinking": true,

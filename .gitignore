@@ -1,6 +1,7 @@
 # Credentials and private machine overrides, at any depth.
 auth.json
 mcp-auth.json
+config/gh/hosts.yml
 .gitconfig.local
 *.local
 *.pem
