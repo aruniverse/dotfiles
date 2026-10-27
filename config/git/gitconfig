@@ -58,6 +58,11 @@
   fixup = commit --fixup
   squash = rebase -i --autosquash
   undo = reset HEAD~1 --mixed
+  ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+  ld = log --pretty=format:"%C(yellow)%h\\ %C(green)%ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short --graph
+  ls = log --pretty=format:"%C(green)%h\\ %C(yellow)[%ad]%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative
+  lp = log --graph --decorate --pretty=oneline --abbrev-commit
+  undo-commit-soft = reset --soft HEAD~1
   tidy = !git branch --merged | grep -v '\\*' | xargs -r git branch -d
 
 [color]

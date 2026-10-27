@@ -1,29 +1,34 @@
 {
   "packages": [
-    "npm:context-mode",
-    "npm:pi-subagents",
-    "npm:pi-mcp-adapter",
     "npm:pi-web-access",
-    {
-      "source": "npm:@plannotator/pi-extension",
-      "skills": []
-    },
-    "npm:@juicesharp/rpiv-btw",
-    "npm:glimpseui",
-    "npm:pi-powerline-footer",
-    "npm:pi-intercom",
-    "npm:pi-prompt-template-model",
-    "npm:@ff-labs/pi-fff",
-    "npm:pi-clarify",
+    "npm:context-mode",
+    "npm:@plannotator/pi-extension",
+    "npm:@quintinshaw/pi-dynamic-workflows",
     "npm:@dietrichgebert/ponytail",
+    "npm:pi-powerline-footer",
+    "npm:glimpseui",
+    "npm:pi-intercom",
+    "npm:@ff-labs/pi-fff",
     "npm:pi-context-view",
-    "npm:pi-fff",
-    "npm:@narumitw/pi-goal",
-    "npm:@quintinshaw/pi-dynamic-workflows"
+    "npm:pi-goal-x",
+    "npm:pi-hermes-memory",
+    "npm:pi-crew",
+    "npm:@juicesharp/rpiv-btw",
+    "npm:@firstpick/pi-package-webui",
+    "npm:pi-vault-mind",
+    "npm:bigpowers",
+    "npm:pi-durable-subagents"
   ],
-  "theme": "dark",
-  "defaultProvider": "github-copilot",
-  "defaultModel": "gpt-6.1-sol",
-  "defaultThinkingLevel": "high",
-  "extensions": ["-builtin:mcp"]
+  "theme": "crew-dark",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-sonnet-5-5",
+  "defaultThinkingLevel": "medium",
+  "markdown": {
+    "mermaid": "final"
+  },
+  "hideThinkingBlock": false,
+  "showCacheMissNotices": true,
+  "tuiMode": "fullscreen",
+  "fullscreenScrollbar": "always",
+  "showHardwareCursor": true
 }
