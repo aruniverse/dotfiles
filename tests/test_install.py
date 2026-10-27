@@ -46,7 +46,8 @@ class InstallTests(unittest.TestCase):
         self.assertIn("zshrc.zsh", before)
         self.assertIn("profile.sh", (self.home / ".zprofile").read_text())
         self.assertIn("env.sh", (self.home / ".zprofile").read_text())
-        for name in ("settings.json", "mcp.json", "extensions/auto-session-name.ts"):
+        for name in ("settings.json", "mcp.json", "extensions/auto-session-name.ts",
+                     "extensions/rex-tab-name.ts"):
             installed = self.home / ".pi/agent" / name
             self.assertTrue(installed.is_file())
             self.assertFalse(installed.is_symlink())
@@ -68,6 +69,7 @@ class InstallTests(unittest.TestCase):
         targets = [
             ".gitconfig", ".gitignore_global", ".vimrc", ".pi/agent/settings.json",
             ".pi/agent/mcp.json", ".pi/agent/extensions/auto-session-name.ts",
+            ".pi/agent/extensions/rex-tab-name.ts",
             "custom-config/herdr/config.toml", "custom-config/zed/settings.json",
             "custom-config/gh/config.yml",
         ]

@@ -18,6 +18,14 @@ Start Pi and use `/login` to authenticate. No credentials or enabled-model/accou
 
 `extensions/auto-session-name.ts` is the custom extension from this machine. It makes an additional request to the active model with up to 500 characters of the first user message to name an unnamed session. It uses Pi's runtime authentication; no keys are stored in the extension. Omit it if you do not want that request or cost.
 
+## Rex tab names
+
+`extensions/rex-tab-name.ts` keeps the tab containing Pi named after the active Pi session. It syncs on startup, `/reload`, `/resume`, `/new`, `/name`, and automatic session naming. Unnamed sessions use `Pi`.
+
+The extension requires a Pi version with the `session_info_changed` event and the `rex` CLI on `PATH`. It only runs in interactive Pi sessions with both `REX_SESSION` and `REX_BLOCK` set. It does not rename the Rex workspace or change focus. Failures produce a warning without interrupting Pi.
+
+After installing, run `/reload`, then `/name My task` to check the tab name. If multiple Pi instances share a split tab, the last session to sync sets that tab's name.
+
 ## Skills and integrations
 
 Skills from packages above are installed with those packages. See [Restore public skills](../../docs/skills.md) for the separately installed collections already used on this machine and the commands to reinstall them. Review and select the skills you need; this repo does not vendor their content, private skills, or machine-specific lockfiles.

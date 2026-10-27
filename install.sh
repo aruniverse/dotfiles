@@ -69,6 +69,8 @@ copy_template "$DOTFILES_DIR/config/pi/settings.json" "$HOME/.pi/agent/settings.
 copy_template "$DOTFILES_DIR/config/pi/mcp.json" "$HOME/.pi/agent/mcp.json"
 copy_template "$DOTFILES_DIR/config/pi/extensions/auto-session-name.ts" \
   "$HOME/.pi/agent/extensions/auto-session-name.ts"
+copy_template "$DOTFILES_DIR/config/pi/extensions/rex-tab-name.ts" \
+  "$HOME/.pi/agent/extensions/rex-tab-name.ts"
 
 link_dotfile "$DOTFILES_DIR/config/git/gitconfig" "$HOME/.gitconfig"
 link_dotfile "$DOTFILES_DIR/config/git/ignore" "$HOME/.gitignore_global"
