@@ -32,6 +32,10 @@ The shell setup exports `DOTFILES_ROOT` from the location of the sourced file, s
 
 After loading the shell environment, launch or restart Rex from that shell. A server launched by the desktop environment may not inherit shell variables; in that case use `git pull --ff-only` from the repo directly. The action reports a missing root rather than guessing a path or pulling the wrong repository. Reloading Lua config alone does not update the server's inherited environment.
 
+## Restore Pi conversations
+
+The Bash/Zsh startup hook can reopen a registered Pi conversation after a Rex server restart. Run `/reload` in existing Pi tabs to register them and `rex-restore-pi --check` from a pane's shell to inspect its registration. See [Rex/Pi session restore](rex-pi-restore.md) for requirements, safeguards, and disabling.
+
 ## Layout Scripts (Lua)
 ```sh
 rex do ~/.config/rex/init.lua --action dev_layout file=app.log

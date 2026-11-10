@@ -48,6 +48,7 @@ case "${SHELL:-/bin/bash}" in
     append_source "$HOME/.zprofile" "$DOTFILES_DIR/config/shell/env.sh"
     append_source "$HOME/.zshrc" "$DOTFILES_DIR/config/shell/env.sh"
     append_source "$HOME/.zshrc" "$DOTFILES_DIR/config/shell/zshrc.zsh"
+    append_source "$HOME/.zshrc" "$DOTFILES_DIR/config/shell/rex-pi-restore.sh"
     ;;
   *bash)
     login_rc="$HOME/.bash_profile"
@@ -57,6 +58,8 @@ case "${SHELL:-/bin/bash}" in
     append_source "$login_rc" "$DOTFILES_DIR/config/shell/profile.sh"
     append_source "$login_rc" "$DOTFILES_DIR/config/shell/env.sh"
     append_source "$HOME/.bashrc" "$DOTFILES_DIR/config/shell/env.sh"
+    append_source "$login_rc" "$DOTFILES_DIR/config/shell/rex-pi-restore.sh"
+    append_source "$HOME/.bashrc" "$DOTFILES_DIR/config/shell/rex-pi-restore.sh"
     ;;
   *) info "Shell not managed; see README.md for Bash/Zsh setup" ;;
 esac
@@ -73,6 +76,8 @@ copy_template "$DOTFILES_DIR/config/pi/extensions/rex-tab-name.ts" \
   "$HOME/.pi/agent/extensions/rex-tab-name.ts"
 copy_template "$DOTFILES_DIR/config/pi/extensions/rex-subagent-popups/index.ts" \
   "$HOME/.pi/agent/extensions/rex-subagent-popups/index.ts"
+copy_template "$DOTFILES_DIR/config/pi/extensions/rex-pi-restore/index.ts" \
+  "$HOME/.pi/agent/extensions/rex-pi-restore/index.ts"
 
 link_dotfile "$DOTFILES_DIR/config/git/gitconfig" "$HOME/.gitconfig"
 link_dotfile "$DOTFILES_DIR/config/git/ignore" "$HOME/.gitignore_global"

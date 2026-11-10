@@ -36,6 +36,14 @@ After installation, run `/reload`. Popups are enabled by default. Use `/rex-suba
 
 Only Pi sessions with a UI and both `REX_SESSION` and `REX_BLOCK` set open popups. Synchronous children and separate workflow engines are unchanged. Workflow containers do not open an extra popup; their background children use the same start-event integration. Grouped background runs share an inspector.
 
+## Restore Pi after a Rex restart
+
+`extensions/rex-pi-restore/index.ts`, `bin/rex-restore-pi`, and the Bash/Zsh prompt hook restore a saved Pi conversation in its original Rex pane after the server restarts. They use exact IDs and the session file path, not the tab name. Run `/reload` in existing Pi tabs after installation to register them.
+
+The helper requires Python 3 and launches `pi --session <exact-session-file>` without a prompt. It skips restoration while the previous Pi process is alive, and deliberately quitting Pi clears its registration. Existing extension recovery settings, including `pi-subagents` workflow auto-resume, are unchanged.
+
+See [Rex/Pi session restore](../../docs/rex-pi-restore.md) for activation, private state, disabling, and the isolated restart test.
+
 ## Skills and integrations
 
 Skills from packages above are installed with those packages. See [Restore public skills](../../docs/skills.md) for the separately installed collections already used on this machine and the commands to reinstall them. Review and select the skills you need; this repo does not vendor their content, private skills, or machine-specific lockfiles.
@@ -52,7 +60,7 @@ The `rex-setup-skills` helper runs those commands after a Rex upgrade. Use Herdr
 Keep these outside Git:
 
 - `auth.json`, `mcp-auth.json`, model/account stores, and trust state.
-- Sessions, caches, and generated runtime state.
+- Sessions, caches, generated runtime state, and Rex/Pi restore records or locks.
 - MCP auth headers, private endpoints, environment values, and provider overrides containing secrets.
 
 `mcp.json` contains only the public Rex community endpoint. Merge it manually when you already have an MCP configuration; do not replace or export your live file wholesale.
