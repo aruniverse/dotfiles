@@ -26,6 +26,16 @@ The extension requires a Pi version with the `session_info_changed` event and th
 
 After installing, run `/reload`, then `/name My task` to check the tab name. If multiple Pi instances share a split tab, the last session to sync sets that tab's name.
 
+## Rex subagent popups
+
+`extensions/rex-subagent-popups/index.ts` opens a floating, read-only inspector when a new `pi-subagents` background run starts. The inspector appears in the tab containing the parent Pi session without taking focus. It shows progress, tool activity, and results, and stays open after completion. Closing it does not stop or steer the child.
+
+The extension requires the `rex` CLI on `PATH`, Rex's `session.new_layer` API, and `pi-subagents` installed in the default `~/.pi/agent/npm/` package directory. It uses that package's standalone `inspector-runner.mjs`; if the package moves this entrypoint, update the resolver. A missing dependency or failed Rex request produces a warning without interrupting the child.
+
+After installation, run `/reload`. Popups are enabled by default. Use `/rex-subagents off`, `/rex-subagents on`, or `/rex-subagents status` to control them until the next reload. These commands do not close existing popups or change child execution.
+
+Only Pi sessions with a UI and both `REX_SESSION` and `REX_BLOCK` set open popups. Synchronous children and separate workflow engines are unchanged. Workflow containers do not open an extra popup; their background children use the same start-event integration. Grouped background runs share an inspector.
+
 ## Skills and integrations
 
 Skills from packages above are installed with those packages. See [Restore public skills](../../docs/skills.md) for the separately installed collections already used on this machine and the commands to reinstall them. Review and select the skills you need; this repo does not vendor their content, private skills, or machine-specific lockfiles.

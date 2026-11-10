@@ -92,9 +92,9 @@ Symlinked defaults update with the repo. Copied templates and existing configs a
 
 ```sh
 python3 -B -m unittest discover -s tests -v
-node --test tests/auto-session-name.test.mjs
+node --test tests/*.test.mjs
 rex config check "$PWD/config/rex/init.lua"
 git diff --check
 ```
 
-The Python tests use isolated homes inside this checkout and require Python 3.11 or newer. Rex, Zsh, and GitHub CLI checks are skipped when their binaries are unavailable. The extension test requires Node.js 22.19 or newer and mocks model calls; no credentials or network requests are needed.
+The Python tests use isolated homes inside this checkout and require Python 3.11 or newer. Rex, Zsh, and GitHub CLI checks are skipped when their binaries are unavailable. The extension tests require Node.js 22.19 or newer and mock model calls, Rex commands, and package lookup; no credentials, installed Pi packages, or network requests are needed.
