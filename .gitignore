@@ -1,0 +1,20 @@
+# Credentials and private machine overrides, at any depth.
+auth.json
+mcp-auth.json
+config/gh/hosts.yml
+.gitconfig.local
+*.local
+*.pem
+*.key
+*.p12
+*.pfx
+.env
+.env.*
+
+# Generated state is not configuration.
+__pycache__/
+*.pyc
+sessions/
+session-snapshots/
+*.log
+.DS_Store

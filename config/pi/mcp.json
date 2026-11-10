@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "superlogical": {
+      "url": "https://www.superlogical.com/rex/community-mcp"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp"
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+-- Remote Hosts
+-- Declare servers you connect to so you can refer to them by label:
+--   rex -S myserver ls
+--
+-- Uncomment and fill in your hosts:
+
+-- rex.host{
+--   label       = "myserver",
+--   address     = "myserver.local:8080",
+--   principal   = "alice",
+-- }

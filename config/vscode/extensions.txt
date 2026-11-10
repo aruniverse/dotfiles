@@ -1,0 +1,6 @@
+biomejs.biome
+esbenp.prettier-vscode
+maosantaella.night-wolf
+ms-python.python
+redhat.vscode-yaml
+vscode-icons-team.vscode-icons

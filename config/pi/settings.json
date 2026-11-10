@@ -1,0 +1,34 @@
+{
+  "packages": [
+    "npm:pi-web-access",
+    "npm:context-mode",
+    "npm:@plannotator/pi-extension",
+    "npm:@quintinshaw/pi-dynamic-workflows",
+    "npm:@dietrichgebert/ponytail",
+    "npm:pi-powerline-footer",
+    "npm:glimpseui",
+    "npm:pi-intercom",
+    "npm:@ff-labs/pi-fff",
+    "npm:pi-context-view",
+    "npm:pi-goal-x",
+    "npm:pi-hermes-memory",
+    "npm:pi-crew",
+    "npm:@juicesharp/rpiv-btw",
+    "npm:@firstpick/pi-package-webui",
+    "npm:pi-vault-mind",
+    "npm:bigpowers",
+    "npm:pi-durable-subagents"
+  ],
+  "theme": "crew-dark",
+  "defaultProvider": "anthropic",
+  "defaultModel": "claude-sonnet-5-5",
+  "defaultThinkingLevel": "medium",
+  "markdown": {
+    "mermaid": "final"
+  },
+  "hideThinkingBlock": false,
+  "showCacheMissNotices": true,
+  "tuiMode": "fullscreen",
+  "fullscreenScrollbar": "always",
+  "showHardwareCursor": true
+}

@@ -1,0 +1,133 @@
+#!/usr/bin/env python3
+"""Resume this pane's saved Pi conversation after a Rex server restart."""
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import stat
+import subprocess
+import sys
+
+
+def marker_path():
+    session, block = os.environ.get("REX_SESSION"), os.environ.get("REX_BLOCK")
+    if not session or not block:
+        return None
+    root = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state")
+    if not root.is_absolute():
+        raise ValueError("XDG_STATE_HOME must be absolute")
+    key = hashlib.sha256((session + "\0" + block).encode()).hexdigest()
+    return root / "rex-pi-restore" / (key + ".json")
+
+
+def read_marker(path):
+    if path.is_symlink():
+        raise ValueError("Refusing a symlinked restore record")
+    info = path.stat()
+    if info.st_uid != os.getuid() or info.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
+        raise ValueError("Restore record must be owned by you and not writable by others")
+    if info.st_size > 65536:
+        raise ValueError("Restore record is too large")
+    record = json.loads(path.read_text())
+    if not isinstance(record, dict) or record.get("version") != 1:
+        raise ValueError("Unrecognized restore record")
+    if record.get("rexSession") != os.environ.get("REX_SESSION") or record.get("rexBlock") != os.environ.get("REX_BLOCK"):
+        raise ValueError("Restore record belongs to another Rex pane")
+    for key in ("piSessionFile", "cwd", "serverInstance"):
+        if not isinstance(record.get(key), str) or not record[key]:
+            raise ValueError("Restore record is missing " + key)
+    if type(record.get("piPid")) is not int or record["piPid"] <= 0:
+        raise ValueError("Restore record has an invalid Pi process ID")
+    session = Path(record["piSessionFile"])
+    cwd = Path(record["cwd"])
+    if not session.is_absolute() or not session.is_file() or not cwd.is_absolute() or not cwd.is_dir():
+        raise ValueError("Saved Pi session or working directory is no longer available")
+    with session.open() as stream:
+        header = json.loads(stream.readline(65536))
+    if not isinstance(header, dict) or header.get("type") != "session":
+        raise ValueError("Saved file is not a Pi session")
+    return record
+
+
+def alive(pid):
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+
+
+def restore(check=False):
+    if os.environ.get("REX_PI_RESTORE") == "0":
+        return 0
+    path = marker_path()
+    if path is None or not path.exists():
+        if check:
+            print("No Pi session is registered for this Rex pane. Run /reload in Pi to register it.")
+        return 0
+    if not check and (not sys.stdin.isatty() or not sys.stdout.isatty()):
+        return 0
+    record = read_marker(path)
+    if check:
+        print("Saved Pi session: " + record["piSessionFile"])
+    rex = shutil.which("rex")
+    if not rex:
+        raise ValueError("rex is not on PATH")
+    args = [rex, "--autostart=false"]
+    if os.environ.get("REX_SERVER"):
+        args += ["--server", os.environ["REX_SERVER"]]
+    result = subprocess.run(args + ["whoami", "--json"], text=True, capture_output=True, timeout=5, check=True)
+    identity = json.loads(result.stdout)
+    if not isinstance(identity, dict):
+        raise ValueError("Rex returned an invalid server identity")
+    instance = identity.get("instance_id")
+    if not isinstance(instance, str) or not instance:
+        raise ValueError("Rex did not return its server instance ID")
+    if identity.get("session_id") != record["rexSession"] or identity.get("block_id") != record["rexBlock"]:
+        raise ValueError("The connected Rex server did not confirm this pane; refusing to restore")
+    if instance == record["serverInstance"]:
+        if check:
+            print("Same Rex server instance; no automatic restore is needed.")
+        return 0
+    if alive(record["piPid"]):
+        if check:
+            print("Original Pi process is still alive; duplicate restore skipped.")
+        return 0
+    if check:
+        print("A new Rex server is running; this conversation would be resumed at idle.")
+        return 0
+    pi = shutil.which("pi")
+    if not pi:
+        raise ValueError("pi is not on PATH")
+    # Hold a per-pane lock while Pi runs so concurrent shell hooks cannot attach twice.
+    fd = os.open(str(path) + ".lock", os.O_CREAT | os.O_RDWR, 0o600)
+    with os.fdopen(fd, "w") as lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return 0
+        if read_marker(path) != record or alive(record["piPid"]):
+            return 0
+        print("[rex-pi-restore] Resuming this pane's saved Pi conversation.", flush=True)
+        return subprocess.call([pi, "--session", record["piSessionFile"]], cwd=record["cwd"])
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="show the saved session and restore decision without launching Pi")
+    args = parser.parse_args()
+    try:
+        return restore(check=args.check)
+    except (OSError, ValueError, subprocess.SubprocessError) as error:
+        print("[rex-pi-restore] Skipped: " + str(error), file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

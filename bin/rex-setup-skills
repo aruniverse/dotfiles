@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# rex-setup-skills
+# Idempotent agent skill setup for Rex.
+# Run after installing or updating Rex.
+
+set -euo pipefail
+
+if ! command -v rex >/dev/null 2>&1; then
+  echo "Error: rex is not installed or not on PATH." >&2
+  exit 1
+fi
+
+echo "==> Setting up Rex agent skills..."
+rex skill setup
+
+echo "==> Skill status:"
+rex skill status
+
+echo "==> Done. Start a new agent session to pick up hooks."
