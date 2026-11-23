@@ -68,7 +68,7 @@ GitHub CLI config includes this machine's HTTPS preference and `gh co` alias. It
 
 The editor templates include fonts, formatters, themes, and editing preferences. They exclude database connections, absolute runtime paths, terminal environment values, workspace trust lists, and agent permission/auto-approval settings. Herdr logs, plugin state, sessions, and its generated Pi integration are not copied.
 
-See [Pi setup](config/pi/README.md), [Rex commands](docs/rex-notes.md), and [restoring Pi after a Rex restart](docs/rex-pi-restore.md). The restore helper requires Python 3 on `PATH`, included in the Brewfile.
+See [Pi setup](config/pi/README.md), [Rex commands](docs/rex-notes.md), [restoring Pi after a Rex restart](docs/rex-pi-restore.md), and [portable Vorssaint preferences](docs/vorssaint.md). The restore helpers require Python 3 on `PATH`, included in the Brewfile.
 
 ## Keep local settings private
 

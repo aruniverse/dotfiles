@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>settings</key>
+	<dict>
+		<key>defaultDurationMinutes</key>
+		<integer>0</integer>
+		<key>featureAvailable.keepAwake</key>
+		<true/>
+		<key>keepAwakeActiveIcon</key>
+		<string>vorssaint</string>
+		<key>keepAwakeAllowDisplaySleep</key>
+		<true/>
+		<key>keepAwakeAutoStart</key>
+		<true/>
+		<key>keepAwakeConnectedToPower</key>
+		<true/>
+		<key>keepAwakeExternalDisplay</key>
+		<true/>
+		<key>keepAwakeIconTint</key>
+		<string>orange</string>
+		<key>keepAwakeSwitchUsesUntil</key>
+		<false/>
+		<key>menuBarCPU</key>
+		<true/>
+		<key>menuBarDiskActivity</key>
+		<false/>
+		<key>menuBarDiskUsage</key>
+		<false/>
+		<key>menuBarGPU</key>
+		<true/>
+		<key>menuBarHideIconWithMetrics</key>
+		<false/>
+		<key>menuBarMemory</key>
+		<true/>
+		<key>menuBarMetricAppearance</key>
+		<string>values</string>
+		<key>menuBarMetricSpacing</key>
+		<string>compact</string>
+		<key>menuBarNetwork</key>
+		<false/>
+	</dict>
+	<key>vorssaintBackupAppVersion</key>
+	<string>3.4.4</string>
+	<key>vorssaintBackupVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>

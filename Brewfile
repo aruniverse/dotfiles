@@ -16,4 +16,5 @@ if OS.mac?
   cask "obsidian"
   cask "iterm2"
   cask "visual-studio-code"
+  cask "vorssaint"
 end

@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""Apply only the reviewed, portable Vorssaint preferences; never a full backup."""
+
+import argparse
+from pathlib import Path
+import plistlib
+import re
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+CONFIG = ROOT / "config/vorssaint/settings.plist"
+APP = Path("/Applications/Vorssaint.app")
+DOMAIN = "com.vorssaint.utils"
+BOOLEANS = {
+    "featureAvailable.keepAwake", "keepAwakeAllowDisplaySleep", "keepAwakeAutoStart",
+    "keepAwakeConnectedToPower", "keepAwakeExternalDisplay", "keepAwakeSwitchUsesUntil",
+    "menuBarCPU", "menuBarDiskActivity", "menuBarDiskUsage", "menuBarGPU",
+    "menuBarHideIconWithMetrics", "menuBarMemory", "menuBarNetwork",
+}
+STRINGS = {
+    "keepAwakeActiveIcon": {"vorssaint"},
+    "keepAwakeIconTint": {"orange"},
+    "menuBarMetricAppearance": {"values"},
+    "menuBarMetricSpacing": {"compact"},
+}
+INTEGERS = {"defaultDurationMinutes"}
+
+
+def load_settings():
+    with CONFIG.open("rb") as stream:
+        backup = plistlib.load(stream)
+    fields = {"settings", "vorssaintBackupVersion", "vorssaintBackupAppVersion"}
+    if not isinstance(backup, dict) or set(backup) != fields:
+        raise ValueError("Unrecognized portable settings schema")
+    if type(backup["vorssaintBackupVersion"]) is not int or backup["vorssaintBackupVersion"] != 1:
+        raise ValueError("Unsupported native backup version")
+    version = backup["vorssaintBackupAppVersion"]
+    if not isinstance(version, str) or not re.fullmatch(r"\d+(?:\.\d+){1,3}", version):
+        raise ValueError("Invalid app version metadata")
+    settings = backup["settings"]
+    if not isinstance(settings, dict):
+        raise ValueError("settings must be a dictionary")
+    for key, value in settings.items():
+        if key in BOOLEANS and type(value) is bool:
+            continue
+        if key in INTEGERS and type(value) is int and 0 <= value <= 2**63 - 1:
+            continue
+        if key in STRINGS and isinstance(value, str) and value in STRINGS[key]:
+            continue
+        raise ValueError("Unreviewed setting or value type: " + key)
+    return settings
+
+
+def apply_settings(check=False):
+    settings = load_settings()
+    if check:
+        for key, value in sorted(settings.items()):
+            print(key + " = " + str(value))
+        print("Validated " + str(len(settings)) + " portable settings; nothing was changed.")
+        return
+    if sys.platform != "darwin":
+        raise ValueError("Vorssaint preferences can only be applied on macOS")
+    if not APP.is_dir():
+        raise ValueError("Install Vorssaint before applying its preferences")
+    process = subprocess.run(["pgrep", "-x", "Vorssaint"], capture_output=True)
+    if process.returncode == 0:
+        raise ValueError("Quit Vorssaint first; no preferences were changed")
+    if process.returncode != 1:
+        raise ValueError("Could not confirm Vorssaint is closed; no preferences were changed")
+    for key, value in sorted(settings.items()):
+        if type(value) is bool:
+            flag, text = "-bool", "true" if value else "false"
+        elif type(value) is int:
+            flag, text = "-int", str(value)
+        else:
+            flag, text = "-string", value
+        subprocess.run(["defaults", "write", DOMAIN, key, flag, text], check=True)
+    print("Applied " + str(len(settings)) + " reviewed Vorssaint preferences. Other preferences and data were left untouched.")
+    print("Launch Vorssaint when ready; permissions and launch-at-login remain local to this Mac.")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="validate and display the portable preferences without changing anything")
+    args = parser.parse_args()
+    try:
+        apply_settings(check=args.check)
+    except (OSError, ValueError, plistlib.InvalidFileException, subprocess.SubprocessError) as error:
+        print("[vorssaint-settings] " + str(error), file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
