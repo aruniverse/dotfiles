@@ -73,6 +73,8 @@ copy_template "$DOTFILES_DIR/config/pi/extensions/rex-tab-name.ts" \
   "$HOME/.pi/agent/extensions/rex-tab-name.ts"
 copy_template "$DOTFILES_DIR/config/pi/extensions/rex-subagent-popups/index.ts" \
   "$HOME/.pi/agent/extensions/rex-subagent-popups/index.ts"
+copy_template "$DOTFILES_DIR/config/pi/extensions/saved-handoff/index.ts" \
+  "$HOME/.pi/agent/extensions/saved-handoff/index.ts"
 for file in index.ts program-resume.ts program-resume-reporter.ts bootstrap.mjs UPSTREAM-LICENSE; do
   copy_template "$DOTFILES_DIR/config/pi/extensions/rex-native-resume/$file" \
     "$HOME/.pi/agent/extensions/rex-native-resume/$file"

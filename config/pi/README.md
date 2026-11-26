@@ -18,6 +18,14 @@ Start Pi and use `/login` to authenticate. No credentials or enabled-model/accou
 
 `extensions/auto-session-name.ts` is the custom extension from this machine. It makes an additional request to the active model with up to 500 characters of the first user message to name an unnamed session. It uses Pi's runtime authentication; no keys are stored in the extension. Omit it if you do not want that request or cost.
 
+## Saved handoffs
+
+`extensions/saved-handoff/index.ts` saves one short handoff in the local Pi session when an interactive session reaches 150,000 context tokens. It uses one bounded summary request to the active model, which can incur a cost. The extension records the estimate with the handoff and does not retry automatically. Session files and generated handoffs stay outside Git.
+
+Before sending a text prompt in a session with at least 200,000 tokens after 30 minutes of inactivity, Pi offers **Continue here** or **Start fresh (keep draft)**. A fresh session stays in the same working directory and keeps the old session intact. Pi includes the saved handoff if available, restores your draft, and waits for you to send it.
+
+Run `/reload` in open Pi sessions after installation. The extension requires Pi with the `agent_settled` event and `newSession` setup and callback support.
+
 ## Rex tab names
 
 `extensions/rex-tab-name.ts` keeps the tab containing Pi named after the active Pi session. It syncs on startup, `/reload`, `/resume`, `/new`, `/name`, and automatic session naming. Unnamed sessions use `Pi`.
