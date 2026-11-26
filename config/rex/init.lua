@@ -9,3 +9,4 @@
 require("keys")
 require("actions")
 require("hosts")
+require("pi_resume")

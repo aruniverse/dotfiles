@@ -34,7 +34,7 @@ After loading the shell environment, launch or restart Rex from that shell. A se
 
 ## Restore Pi conversations
 
-The Bash/Zsh startup hook can reopen a registered Pi conversation after a Rex server restart. Run `/reload` in existing Pi tabs to register them and `rex-restore-pi --check` from a pane's shell to inspect its registration. See [Rex/Pi session restore](rex-pi-restore.md) for requirements, safeguards, and disabling.
+The Pi bridge reports authenticated OSC 7577 records to Rex's native session restoration. Load `pi_resume.lua` in Rex, reload its config, and run `/reload` in existing Pi tabs before the next server restart. Inspect `program_resume_records` to verify `trusted` and `chosen`; the command can contain private paths, so do not share it wholesale. See [Pi on Rex native session restore](rex-pi-restore.md) for profile support, safeguards, and legacy-hook removal.
 
 ## Layout Scripts (Lua)
 ```sh

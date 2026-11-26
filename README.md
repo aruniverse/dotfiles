@@ -68,7 +68,7 @@ GitHub CLI config includes this machine's HTTPS preference and `gh co` alias. It
 
 The editor templates include fonts, formatters, themes, and editing preferences. They exclude database connections, absolute runtime paths, terminal environment values, workspace trust lists, and agent permission/auto-approval settings. Herdr logs, plugin state, sessions, and its generated Pi integration are not copied.
 
-See [Pi setup](config/pi/README.md), [Rex commands](docs/rex-notes.md), [restoring Pi after a Rex restart](docs/rex-pi-restore.md), and [portable Vorssaint preferences](docs/vorssaint.md). The restore helpers require Python 3 on `PATH`, included in the Brewfile.
+See [Pi setup](config/pi/README.md), [Rex commands](docs/rex-notes.md), [restoring Pi after a Rex restart](docs/rex-pi-restore.md), and [portable Vorssaint preferences](docs/vorssaint.md). The Vorssaint helper requires Python 3; the native Rex/Pi bridge uses Node.js. Both are covered by the dependency setup.
 
 ## Keep local settings private
 
@@ -97,6 +97,6 @@ rex config check "$PWD/config/rex/init.lua"
 git diff --check
 ```
 
-The Python tests require Python 3.11 or newer. Installer tests use isolated homes inside this checkout; restore-helper and shell tests use temporary state and mock external programs. Rex, Zsh, and GitHub CLI checks are skipped when their binaries are unavailable. The extension tests require Node.js 22.19 or newer and mock model calls, Rex commands, and package lookup; no credentials, installed Pi packages, or network requests are needed.
+The Python tests require Python 3.11 or newer. Installer tests use isolated homes inside this checkout; helper tests use temporary state and mock external programs. Rex, Zsh, and GitHub CLI checks are skipped when their binaries are unavailable. The extension tests require Node.js 22.19 or newer and mock model calls, Rex commands, and package lookup; no credentials, installed Pi packages, or network requests are needed.
 
-To check a real Rex/Pi restart separately, run `python3 -B tests/integration_rex_pi_restore.py`. This opt-in test requires Rex, Pi, Node.js, and Zsh. It restarts only a temporary server, uses isolated Pi configuration, and makes no model requests. See [Rex/Pi session restore](docs/rex-pi-restore.md).
+To check Rex's native Pi restart separately, run `python3 -B tests/integration_rex_native_resume.py`. This opt-in test requires a Rex version with OSC 7577, npm-installed Pi, Node.js, and Zsh. It verifies trusted native records and exact recovery for plain Pi, work and personal, restarting only a temporary server and making no model requests. See [Rex/Pi session restore](docs/rex-pi-restore.md).

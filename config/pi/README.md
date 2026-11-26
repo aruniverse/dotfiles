@@ -38,9 +38,9 @@ Only Pi sessions with a UI and both `REX_SESSION` and `REX_BLOCK` set open popup
 
 ## Restore Pi after a Rex restart
 
-`extensions/rex-pi-restore/index.ts`, `bin/rex-restore-pi`, and the Bash/Zsh prompt hook restore a saved Pi conversation in its original Rex pane after the server restarts. They use exact IDs and the session file path, not the tab name. Run `/reload` in existing Pi tabs after installation to register them.
+`extensions/rex-native-resume/` backports the native OSC 7577 formatter/reporter from earendil-works/pi#12557. `config/rex/pi_resume.lua` opts Rex into known Pi commands and private session-file locations. Rex now handles restarting, process lifetime, and duplicate suppression; the custom Python registry and shell-prompt hook are removed.
 
-The helper requires Python 3 and launches `pi --session <exact-session-file>` without a prompt. It skips restoration while the previous Pi process is alive, and deliberately quitting Pi clears its registration. Existing extension recovery settings, including `pi-subagents` workflow auto-resume, are unchanged.
+Run `rex config reload` after adding the trust module to your local config, and `/reload` in existing Pi tabs before the next server restart. Plain `pi` uses the default work directory. `pi-work` and `pi-personal` preserve their profile with fixed in-process SDK entrypoints. A missing personal profile or unhandled per-run options do not fall back to another account. Existing extension recovery settings, including `pi-subagents` workflow auto-resume, are unchanged.
 
 See [Rex/Pi session restore](../../docs/rex-pi-restore.md) for activation, private state, disabling, and the isolated restart test.
 

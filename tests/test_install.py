@@ -44,20 +44,25 @@ class InstallTests(unittest.TestCase):
         self.assertEqual(rc.read_text(), before)
         self.assertIn("env.sh", before)
         self.assertIn("zshrc.zsh", before)
-        self.assertEqual(sum("config/shell/rex-pi-restore.sh" in line for line in before.splitlines()), 1)
+        self.assertNotIn("config/shell/rex-pi-restore.sh", before)
         self.assertIn("profile.sh", (self.home / ".zprofile").read_text())
         self.assertIn("env.sh", (self.home / ".zprofile").read_text())
         for name in ("settings.json", "mcp.json", "extensions/auto-session-name.ts",
                      "extensions/rex-tab-name.ts", "extensions/rex-subagent-popups/index.ts",
-                     "extensions/rex-pi-restore/index.ts"):
+                     "extensions/rex-native-resume/index.ts", "extensions/rex-native-resume/program-resume.ts",
+                     "extensions/rex-native-resume/program-resume-reporter.ts", "extensions/rex-native-resume/bootstrap.mjs",
+                     "extensions/rex-native-resume/UPSTREAM-LICENSE"):
             installed = self.home / ".pi/agent" / name
             self.assertTrue(installed.is_file())
             self.assertFalse(installed.is_symlink())
         self.assertTrue((self.home / "custom-config/rex/init.lua").is_symlink())
         self.assertTrue((self.home / ".local/bin/rex-setup-skills").is_symlink())
-        restore_helper = self.home / ".local/bin/rex-restore-pi"
-        self.assertTrue(restore_helper.is_symlink())
-        self.assertTrue(os.access(restore_helper, os.X_OK))
+        self.assertTrue((self.home / "custom-config/rex/pi_resume.lua").is_symlink())
+        for name in ("pi-work", "pi-personal"):
+            launcher = self.home / ".local/bin" / name
+            self.assertTrue(launcher.is_symlink())
+            self.assertTrue(os.access(launcher, os.X_OK))
+        self.assertFalse((self.home / ".local/bin/rex-restore-pi").exists())
         self.assertFalse((self.home / ".local/state/rex-pi-restore").exists())
         self.assertTrue((self.home / ".gitignore_global").is_symlink())
         gh_config = self.home / "custom-config/gh/config.yml"
@@ -77,7 +82,7 @@ class InstallTests(unittest.TestCase):
             ".pi/agent/mcp.json", ".pi/agent/extensions/auto-session-name.ts",
             ".pi/agent/extensions/rex-tab-name.ts",
             ".pi/agent/extensions/rex-subagent-popups/index.ts",
-            ".pi/agent/extensions/rex-pi-restore/index.ts", ".local/bin/rex-restore-pi",
+            ".pi/agent/extensions/rex-native-resume/index.ts", ".local/bin/pi-work",
             "custom-config/herdr/config.toml", "custom-config/zed/settings.json",
             "custom-config/gh/config.yml",
         ]
@@ -98,6 +103,7 @@ class InstallTests(unittest.TestCase):
         for name in targets:
             self.assertEqual((self.home / name).read_text(), "local configuration, do not replace\n")
         self.assertEqual(os.readlink(rex), str(self.home / "missing-local-config.lua"))
+
 
     @unittest.skipUnless(shutil.which("gh"), "GitHub CLI is not installed")
     def test_gh_config_override_preferences_and_existing_auth(self):
@@ -140,13 +146,13 @@ class InstallTests(unittest.TestCase):
         self.assertFalse((self.home / ".bash_profile").exists())
         self.assertIn("env.sh", profile.read_text())
         self.assertIn("env.sh", (self.home / ".bashrc").read_text())
-        self.assertIn("rex-pi-restore.sh", profile.read_text())
-        self.assertIn("rex-pi-restore.sh", (self.home / ".bashrc").read_text())
+        self.assertNotIn("rex-pi-restore.sh", profile.read_text())
+        self.assertNotIn("rex-pi-restore.sh", (self.home / ".bashrc").read_text())
         self.assertTrue(profile.read_text().startswith("# existing login configuration\n"))
         profile.unlink()
         self.install()
         self.assertIn("env.sh", (self.home / ".bash_profile").read_text())
-        self.assertIn("rex-pi-restore.sh", (self.home / ".bash_profile").read_text())
+        self.assertNotIn("rex-pi-restore.sh", (self.home / ".bash_profile").read_text())
 
     def test_shell_root_is_exported_from_arbitrary_clone_and_path_is_idempotent(self):
         for shell in ("/bin/bash", shutil.which("zsh")):
