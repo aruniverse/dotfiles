@@ -1,0 +1,79 @@
+[user]
+  name = Arun George
+  email = aruniverse@users.noreply.github.com
+
+[core]
+  editor = vim
+  pager = less
+  autocrlf = input
+  excludesfile = ~/.gitignore_global
+
+[init]
+  defaultBranch = main
+
+[push]
+  default = simple
+  autoSetupRemote = true
+
+[pull]
+  rebase = false
+  ff = only
+
+[filter "lfs"]
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+
+[fetch]
+  prune = true
+
+[diff]
+  colorMoved = zebra
+
+[status]
+  short = true
+  branch = true
+
+[alias]
+  aa = add --all
+  bd = branch -d
+  cb = checkout -b
+  di = diff
+  stl = stash list
+  stp = stash pop
+  ru = remote update
+  fa = fetch --all
+  st = status
+  co = checkout
+  br = branch
+  ci = commit
+  cia = commit --amend
+  cian = commit --amend --no-edit
+  lg = log --oneline --graph --decorate --all
+  last = log -1 HEAD --stat
+  unstage = reset HEAD --
+  discard = checkout --
+  amend = commit --amend --no-edit
+  fixup = commit --fixup
+  squash = rebase -i --autosquash
+  undo = reset HEAD~1 --mixed
+  ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
+  ld = log --pretty=format:"%C(yellow)%h\\ %C(green)%ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short --graph
+  ls = log --pretty=format:"%C(green)%h\\ %C(yellow)[%ad]%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative
+  lp = log --graph --decorate --pretty=oneline --abbrev-commit
+  undo-commit-soft = reset --soft HEAD~1
+  tidy = !git branch --merged | grep -v '\\*' | xargs -r git branch -d
+
+[color]
+  ui = auto
+
+[log]
+  abbrevCommit = true
+
+[rerere]
+  enabled = true
+
+# Keep credential helpers, work identities, and private endpoints outside this repo.
+[include]
+  path = ~/.gitconfig.local

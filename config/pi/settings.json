@@ -1,0 +1,36 @@
+{
+  "packages": [
+    "npm:context-mode",
+    "npm:pi-subagents",
+    "npm:pi-mcp-adapter",
+    "npm:pi-web-access",
+    {
+      "source": "npm:@plannotator/pi-extension",
+      "skills": []
+    },
+    "npm:@juicesharp/rpiv-btw",
+    "npm:glimpseui",
+    "npm:pi-powerline-footer",
+    "npm:pi-intercom",
+    "npm:pi-prompt-template-model",
+    "npm:@ff-labs/pi-fff",
+    "npm:pi-clarify",
+    "npm:@dietrichgebert/ponytail",
+    "npm:pi-context-view",
+    "npm:@narumitw/pi-goal",
+    "npm:@quintinshaw/pi-dynamic-workflows"
+  ],
+  "extensions": ["-builtin:mcp"],
+  "theme": "dark",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "gpt-6.2-sol",
+  "defaultThinkingLevel": "high",
+  "markdown": {
+    "mermaid": "final"
+  },
+  "hideThinkingBlock": false,
+  "showCacheMissNotices": true,
+  "tuiMode": "fullscreen",
+  "fullscreenScrollbar": "always",
+  "showHardwareCursor": true
+}

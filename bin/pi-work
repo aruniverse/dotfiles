@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+import { homedir } from "node:os";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
+try {
+  const { runPersona } = await import(pathToFileURL(join(homedir(), ".pi/agent/extensions/rex-native-resume/bootstrap.mjs")));
+  await runPersona("work");
+} catch (error) {
+  console.error("[pi-work] " + error.message);
+  process.exitCode = 1;
+}
