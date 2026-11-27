@@ -19,6 +19,7 @@ function setup({ hasUI = true, inspectCode = 0, persisted = true,
   const commands = new Map();
   const calls = [];
   const notices = [];
+  const requireRoots = [];
   const ctx = {
     hasUI,
     sessionManager: {
@@ -30,7 +31,10 @@ function setup({ hasUI = true, inspectCode = 0, persisted = true,
   const sandbox = vm.createContext({
     process: { env, execPath: "/test/node" }, Buffer, AbortController,
     existsSync: () => runnerExists,
-    createRequire: () => ({ resolve: () => "/test/pi-subagents/bundle/inspectors.js" }),
+    createRequire: (root) => {
+      requireRoots.push(root);
+      return { resolve: () => "/test/pi-subagents/bundle/inspectors.js" };
+    },
     homedir: () => "/test/home", dirname, isAbsolute, join,
   });
   vm.runInContext(source, sandbox);
@@ -56,7 +60,7 @@ function setup({ hasUI = true, inspectCode = 0, persisted = true,
   };
   const emit = (data = event) => events.emit("subagent:async-started", data);
   const flush = () => new Promise(resolve => setImmediate(resolve));
-  return { handlers, commands, calls, notices, ctx, event, emit, flush };
+  return { handlers, commands, calls, notices, requireRoots, ctx, event, emit, flush };
 }
 
 test("opens a readonly floating inspector in the parent's tab without taking focus", async () => {
@@ -83,6 +87,15 @@ test("opens a readonly floating inspector in the parent's tab without taking foc
   const roots = options.command[options.command.indexOf("--session-roots") + 1];
   assert.deepEqual(JSON.parse(Buffer.from(roots, "base64").toString()), [app.event.sessionRoot]);
   assert.deepEqual(app.notices, []);
+});
+
+test("loads the inspector from the active Pi profile's npm directory", async () => {
+  const app = setup({ env: {
+    REX_SESSION: "session:test", REX_BLOCK: "block:parent", PI_CODING_AGENT_DIR: "~/.pi/personas/personal",
+  } });
+  app.emit();
+  await app.flush();
+  assert.deepEqual(app.requireRoots, ["/test/home/.pi/personas/personal/npm/package.json"]);
 });
 
 test("duplicate start events open only one popup, including concurrent duplicates", async () => {

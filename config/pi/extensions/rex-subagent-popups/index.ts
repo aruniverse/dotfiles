@@ -16,7 +16,9 @@ type Started = {
 // Use the existing inspector, not a second Pi or a session attach.
 // shortcut: This resolver follows pi-subagents' package layout; update it if the CLI entrypoint moves.
 function inspectorRunner(): string {
-  const require = createRequire(join(homedir(), ".pi/agent/npm/package.json"));
+  const configuredAgentDir = process.env.PI_CODING_AGENT_DIR;
+  const agentDir = configuredAgentDir ? configuredAgentDir.replace(/^~(?=\/|$)/, homedir()) : join(homedir(), ".pi/agent");
+  const require = createRequire(join(agentDir, "npm/package.json"));
   const entry = require.resolve("pi-subagents/inspectors");
   const runner = join(dirname(dirname(entry)), "inspector-runner.mjs");
   if (!existsSync(runner)) throw new Error("The installed pi-subagents inspector runner is unavailable.");

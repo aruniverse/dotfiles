@@ -4,9 +4,11 @@ Pi defaults to `~/.pi/agent/`; `PI_CODING_AGENT_DIR` can override that location.
 
 ## Preferences and packages
 
-`settings.json` captures this machine's package selection, dark theme, GitHub Copilot provider, and high thinking level. The default model is an account-dependent preference, not a bundled model. Choose an available model with `/model` if needed.
+`settings.json` records the default Pi profile's installed packages, dark theme, GitHub Copilot provider, and high thinking level. The default model is an account-dependent preference, not a bundled model. Choose an available model with `/model` if needed.
 
-Both FFF packages are present on this machine: `@ff-labs/pi-fff` supplies search tools; `pi-fff` also supplies file resolution and autocomplete. The Plannotator entry disables its bundled skills because this machine installs those separately. Built-in MCP is explicitly disabled to match the use of `pi-mcp-adapter`.
+`@ff-labs/pi-fff` supplies file search and `@` autocomplete. Do not install the unscoped `pi-fff` alongside it: its startup editor replacement can take keyboard focus from `/resume`. If it is already installed, run `pi remove npm:pi-fff`, then restart Pi.
+
+The Plannotator entry excludes its bundled skills because this setup installs them separately. Built-in MCP is disabled because `pi-mcp-adapter` loads the MCP configuration.
 
 After merging settings, reconcile packages:
 
@@ -38,7 +40,7 @@ After installing, run `/reload`, then `/name My task` to check the tab name. If 
 
 `extensions/rex-subagent-popups/index.ts` opens a floating, read-only inspector when a new `pi-subagents` background run starts. The inspector appears in the tab containing the parent Pi session without taking focus. It shows progress, tool activity, and results, and stays open after completion. Closing it does not stop or steer the child.
 
-The extension requires the `rex` CLI on `PATH`, Rex's `session.new_layer` API, and `pi-subagents` installed in the default `~/.pi/agent/npm/` package directory. It uses that package's standalone `inspector-runner.mjs`; if the package moves this entrypoint, update the resolver. A missing dependency or failed Rex request produces a warning without interrupting the child.
+The extension requires the `rex` CLI on `PATH`, Rex's `session.new_layer` API, and `pi-subagents` installed in the active Pi profile. It uses that package's standalone `inspector-runner.mjs`; if the package moves this entrypoint, update the resolver. A missing dependency or failed Rex request produces a warning without interrupting the child.
 
 After installation, run `/reload`. Popups are enabled by default. Use `/rex-subagents off`, `/rex-subagents on`, or `/rex-subagents status` to control them until the next reload. These commands do not close existing popups or change child execution.
 
@@ -71,4 +73,4 @@ Keep these outside Git:
 - Sessions, caches, generated runtime state, and Rex/Pi restore records or locks.
 - MCP auth headers, private endpoints, environment values, and provider overrides containing secrets.
 
-`mcp.json` contains only the public Rex community endpoint. Merge it manually when you already have an MCP configuration; do not replace or export your live file wholesale.
+`mcp.json` includes the public Rex community endpoint and the public Playwright MCP package. Merge it manually when you already have an MCP configuration. Do not replace or export your live file wholesale.
